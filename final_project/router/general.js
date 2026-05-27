@@ -89,13 +89,26 @@ public_users.get("/author/:author", function (req, res) {
 public_users.get("/title/:title", function (req, res) {
   //Write your code here
   const title = req.params.title;
-  let book = [];
-  for (let i in books) {
-    if (books[i].title.toLowerCase().includes(title.toLowerCase())) {
-      book.push(books[i]);
-    }
-  }
-  return res.status(200).json(book);
+  const bookByTitle = (title) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        let book = [];
+        for (let i in books) {
+          if (books[i].title.toLowerCase().includes(title.toLowerCase())) {
+            book.push(books[i]);
+          }
+        }
+        resolve(book);
+      }, 1000);
+    });
+  };
+  bookByTitle(title)
+    .then((book) => {
+      return res.status(200).json(book);
+    })
+    .catch((err) => {
+      return res.status(500).json({ message: "Error fetching book" });
+    });
 });
 
 //  Get book review
