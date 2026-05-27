@@ -63,13 +63,26 @@ public_users.get("/isbn/:isbn", function (req, res) {
 public_users.get("/author/:author", function (req, res) {
   //Write your code here
   const author = req.params.author;
-  let book = [];
-  for (let i in books) {
-    if (books[i].author.toLowerCase().includes(author.toLowerCase())) {
-      book.push(books[i]);
-    }
-  }
-  return res.status(200).json(book);
+  const bookByAuthor = (author) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        let book = [];
+        for (let i in books) {
+          if (books[i].author.toLowerCase().includes(author.toLowerCase())) {
+            book.push(books[i]);
+          }
+          resolve(book);
+        }
+      }, 1000);
+    });
+  };
+  bookByAuthor(author)
+    .then((book) => {
+      return res.status(200).json(book);
+    })
+    .catch((err) => {
+      return res.status(500).json({ message: "Error fetching book" });
+    });
 });
 
 // Get all books based on title
