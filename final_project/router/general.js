@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require("axios");
 
 public_users.post("/register", (req, res) => {
   //Write your code here
@@ -22,15 +23,41 @@ public_users.post("/register", (req, res) => {
 // Get the book list available in the shop
 public_users.get("/", function (req, res) {
   //Write your code here
-  return res.status(200).json(books);
+  const getBooks = () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(books);
+      }, 1000);
+    });
+  };
+  getBooks()
+    .then((books) => {
+      return res.status(200).json(books);
+    })
+    .catch((err) => {
+      return res.status(500).json({ message: "Error fetching books" });
+    });
 });
 
 // Get book details based on ISBN
 public_users.get("/isbn/:isbn", function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
-  const book = books[isbn];
-  return res.status(200).json(book);
+  const bookByISBN = (isbn) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const book = books[isbn];
+        resolve(book);
+      }, 1000);
+    });
+  };
+  bookByISBN(isbn)
+    .then((book) => {
+      return res.status(200).json(book);
+    })
+    .catch((err) => {
+      return res.status(500).json({ message: "Error fetching book" });
+    });
 });
 
 // Get book details based on author
